@@ -1,50 +1,91 @@
-load_filename = input("Enter filename of the .mat file: ", 's');
-if load_filename == ""
-   load_filename = "jatte_original_decomp.mat"; 
-end
-
-hide_filename = input("Enter filename of the file to hide: ", 's');
-if hide_filename == ""
-   hide_filename = "hello.txt"; 
-end
-
-%Load files
-load(load_filename);
-temp_coefs = coefs;
-
-hide_ID = fopen(hide_filename);
-file_to_hide = fread(hide_ID);
-
-fprintf("Size of coefs = %d\n", size(temp_coefs, 2))
-fprintf("Size of data = %d\n", size(file_to_hide, 1))
-
-temp_coefs = hide_in_coefs(temp_coefs, file_to_hide);
-
-S.('coefs') = temp_coefs;
-S.('sizes') = sizes;
-save('hello.mat', '-struct', 'S')
-
-ext = extract_file(temp_coefs, 4);
-
-f_ID = fopen("extracted.txt", "w");
-fwrite(f_ID, ext);
+clc;
+fprintf("Welcome to the Steganography Machine!")
 
 while(true)
-    clc
-    fprintf("Welcome to the Steganography Machine!\nPlease select one of the following options:\n\t1 Load Coefficients from a Decomposition\n\t2 Load File to Embed in Coefficients\n\t3 Hide Loaded File in Coefficients\n\t4 Extract File from Coefficients\n\t5 Save Coefficients\n\t6 Quit\n")
+    fprintf("\nPlease select one of the following options:\n\t1 Load coefficients from a decomposition\n\t2 Load file to embed in coefficients\n\t3 Hide loaded file in coefficients\n\t4 Extract file from coefficients\n\t5 Save coefficients\n\t6 Quit\n")
     selection = input("Please enter a number (1-6): ");
+    fprintf("Selection: %d\n\n", selection);
+    if(isempty(selection))
+        selection = 6;
+    end
     switch(selection)
-        case 1
+        case 1 %Load coefficients
+            load_filename = input("Enter filename of the .mat file: ", 's');
+            if load_filename == ""
+               load_filename = "jatte_original_decomp.mat"; 
+            end
             
-        case 2
+            %Load file
+            load(load_filename);
+            temp_coefs = coefs;
             
-        case 3
+            fprintf("'%s' loaded.\n", load_filename)
             
-        case 4
+        case 2 %Load file to hide
+            hide_filename = input("Enter filename of the file to hide: ", 's');
+            if hide_filename == ""
+               hide_filename = "hello.txt"; 
+            end
+
+            %Load file
+            hide_ID = fopen(hide_filename);
+            file_to_hide = fread(hide_ID);
             
-        case 5
+            fprintf("'%s' loadad.\n", hide_filename);
+            
+        case 3 %Hide file
+            if(~exist('temp_coefs', 'var') || ~exist('file_to_hide', 'var'))
+                fprintf("ERROR: Coefficients or file not loaded.\n")
+                continue
+            end
+            
+            fprintf("Size of coefs = %d\n", size(temp_coefs, 2))
+            fprintf("Size of data = %d\n", size(file_to_hide, 1))
+
+            temp_coefs = hide_in_coefs(temp_coefs, file_to_hide);
+            fprintf("File hidden in coefficients.\n")
+            
+        case 4 %Extract file
+            if(~exist('temp_coefs', 'var'))
+                fprintf("ERROR: Coefficients not loaded.\n")
+                continue
+            end
+            
+            ext = extract_file(temp_coefs, 4);
+            save_file = input("Enter a filename to save extracted file. ", 's');
+            if save_file == ""
+                save_file = "extracted.txt";
+            end
+            
+            f_ID = fopen(save_file, "w");
+            fwrite(f_ID, ext);
+            fprintf("Extracted file saved to %s.\n", save_file)
+            
+        case 5 %Save coefficients
+            if(~exist('temp_coefs', 'var'))
+                fprintf("ERROR: Coefficients not loaded.\n")
+                continue
+            end
+            
+            save_coefs = input("Enter a .mat filename to save coefficients: ", "s");
+            S.('coefs') = temp_coefs;
+            S.('sizes') = sizes;
+            if save_coefs == ""
+                save_coefs = "hello.mat";
+            end
+            
+            save(save_coefs, '-struct', 'S')
             
         otherwise
+            fprintf("Goodbye\n")
+            if(exist('f_ID', 'var'))
+                fclose(f_ID);
+            end
+            
+            if(exist('hide_ID', 'var'))
+                fclose(hide_ID);
+            end
+            clear;
             return
     end
 end
