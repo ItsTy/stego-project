@@ -103,6 +103,9 @@ function altered = hide_in_coefs(target, data)
     %Replaces the last n bits in each coefficient in target with part of the binary
     %code of data
     
+    
+    altered = target;
+
     %Temp setup: each PAIR of 2 coefficient holds a byte
     %32-bit header to hold number of datapoints to read
     if size(target, 2) < 2 * size(data, 1) + 32
@@ -119,15 +122,14 @@ function altered = hide_in_coefs(target, data)
     
     data = [vals_mat; data];
     
-    altered = target;
     for i = 1:size(data, 1)
         data_bits = string(dec2bin(data(i), 8));
         left_bits = extractBetween(data_bits, 1, 4);
         right_bits = extractBetween(data_bits, 5, 8);
         
-        target_bits1 = string(dec2bin(altered(1, 2 * i - 1)));
-        target_bits2 = string(dec2bin(altered(1, 2 * i)));
-        
+        target_bits1 = string(dec2bin(altered(1, 2 * i - 1), 8));
+        target_bits2 = string(dec2bin(altered(1, 2 * i), 8));
+
         target_bits1 = swap_bits(target_bits1, left_bits);
         target_bits2 = swap_bits(target_bits2, right_bits);
         
