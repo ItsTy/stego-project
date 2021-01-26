@@ -1,2 +1,4 @@
 # stego-project
  
+Steganography, roughly meaning “covered writing” is a method of hiding a piece of information inside of another (Lo, Topiwala, & Wang, 1998). Take, for example, a letter with a secret message hidden inside. This may simply be that the first letter in every line can be taken and turned into a comprehensible sentence, or it may follow a more complex pattern. The letter itself may be innocuous and have a coherent message without knowing the key, but the interpreted message can be completely different than the plaintext one. Steganography is not limited to a particular medium or file type, and can vary in complexity.
+	In this project, the goal is to hide files of various types and sizes in images using their Haar and Baubechies decompositions. Then, the reconstructed images will be compared to their original counterparts to see how the technique affects the quality of the image.
